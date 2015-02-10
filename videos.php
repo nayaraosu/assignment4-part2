@@ -36,12 +36,12 @@
             $row = $rows[0];
             if ($row[0] == 1)
             {
-                echo $update_q = "UPDATE video SET rented=False WHERE id='$vid_id'";
+                $update_q = "UPDATE video SET rented=False WHERE id='$vid_id'";
                 $mysqli->query($update_q);
             }
             else
             {
-                echo $update_q = "UPDATE video SET rented=True WHERE id='$vid_id'";   
+                $update_q = "UPDATE video SET rented=True WHERE id='$vid_id'";   
                 $mysqli->query($update_q);
             }
         }
@@ -51,14 +51,14 @@
             $vid_id =  $_GET['remove'];
             $q = "DELETE FROM video where id='$vid_id'";
             $result = $mysqli->query($q);
-            echo $q;
         }    
 
-
-        if(isset($_GET['add']) && $_GET['add'] === "true")
+        
+        if(isset($_GET['add']) && $_GET['add'] === "Add Movie")
         {   
             addVid($mysqli);
         }
+
         getCatList($mysqli);
         getVids($mysqli,$cat);
 
@@ -91,9 +91,8 @@
         //$stmnt->execute();
         //$stmnt->bind_result($result);
         echo '<table border="1">';
-        echo "<tr><th>id</th><th>Title</th><th>Category</th><th>Runtime</th><th>Status</th>";
+        echo "<tr><th>Title</th><th>Category</th><th>Runtime</th><th>Status</th>";
         echo "<tr>";
-        //echo $rows[0];
         foreach ($rows as $value) {
           $rent_status = "Available";
           $rent_btn_txt = "Check out";
@@ -107,7 +106,7 @@
             $rent_status = "Checked Out";
             $rent_btn_txt = "Check in";
           }
-          echo"<td>$id</td><td>$name</td><td>$cat</td><td>$len</td><td>$rent_status</td>";
+          echo"<td>$name</td><td>$cat</td><td>$len</td><td>$rent_status</td>";
           echo "<td><form action='videos.php' method='GET'><input type='hidden' name='checkout' value='$id'>"."<input type='submit' value='$rent_btn_txt'></form></td>";
           echo "<td><form action='videos.php' method='GET'><input type='hidden' name='remove' value='$id'>".'<input type="submit" value="Delete"></form></td>';          
 
@@ -129,7 +128,6 @@
         {
             $cat = $value[0];
             echo "<option value='$cat'>$cat</option>";
-    # code...
         }
         echo "</select>";
         echo '<input type="submit" value="Filter"></form>';
