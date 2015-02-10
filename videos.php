@@ -62,6 +62,15 @@
         getCatList($mysqli);
         getVids($mysqli,$cat);
 
+        
+        echo "<form action='videos.php' method='GET'>";
+        echo '<label>Video Title: <input type="text" name="name"></label>';
+        echo '<label>Category: <input type="text" name="category"></label>';
+        echo '<label>Running Time: <input type="number" name="length"></label>';
+        echo '<input type="submit" name="add" value="Add Movie">';
+        echo '</form>';
+
+
     }
 
 
