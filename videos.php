@@ -17,12 +17,57 @@
     $q = 'INSERT INTO video (name,category,length,rented) VALUES ("Frank", "Comedy", 90,True)';
     //echo $mysqli->query($q);
 
-    allVids($mysqli);
-    getCatList($mysqli);
-
-    function allVids($sql_handle)
+    if(!isset($_GET['filter']))
     {
-        $q = "SELECT * FROM video";
+        $cat = "show_all";
+    }
+    else
+    {
+        $cat = $_GET['filter'];
+    }
+
+    if(isset($_GET['checkout']))
+    {
+        $vid_id =  $_GET['checkout'];
+        $q = "SELECT rented FROM video where id='$vid_id'";
+        $result = $mysqli->query($q);
+        $rows = $result->fetch_all();
+        $row = $rows[0];
+        if ($row[0] == 1)
+        {
+            echo $update_q = "UPDATE video SET rented=False WHERE id='$vid_id'";
+            $mysqli->query($update_q);
+        }
+        else
+        {
+            echo $update_q = "UPDATE video SET rented=True WHERE id='$vid_id'";   
+            $mysqli->query($update_q);
+        }
+    }
+
+    if(isset($_GET['remove']))
+    {
+        $vid_id =  $_GET['remove'];
+        $q = "DELETE FROM video where id='$vid_id'";
+        $result = $mysqli->query($q);
+        echo $q;
+    }    
+
+    
+    getCatList($mysqli);
+    getVids($mysqli,$cat);
+
+    function getVids($sql_handle, $category)
+    {
+        if($category == "show_all")
+        {
+            $q = "SELECT * FROM video";
+        }
+        else
+        {
+            $q = "SELECT * FROM video WHERE category='$category'";
+        }
+
         $result = $sql_handle->query($q);
         $rows = $result->fetch_all();
         //$stmnt->execute();
@@ -45,8 +90,8 @@
             $rent_btn_txt = "Check in";
           }
           echo"<td>$id</td><td>$name</td><td>$cat</td><td>$len</td><td>$rent_status</td>";
-          echo "<td><form action='checkout.php' method='GET'><input type='hidden' name='vid_id' value='$id'>"."<input type='submit' value='$rent_btn_txt'></form></td>";
-          echo "<td><form action='remove.php' method='GET'><input type='hidden' name='vid_id' value='$id'>".'<input type="submit" value="Delete"></form></td>';          
+          echo "<td><form action='videos.php' method='GET'><input type='hidden' name='checkout' value='$id'>"."<input type='submit' value='$rent_btn_txt'></form></td>";
+          echo "<td><form action='videos.php' method='GET'><input type='hidden' name='remove' value='$id'>".'<input type="submit" value="Delete"></form></td>';          
 
           echo "<tr>";
         }  
@@ -59,8 +104,9 @@
         $q = "SELECT DISTINCT category FROM video ORDER BY category ASC" ;
         $result = $sql_handle->query($q);
         $rows = $result->fetch_all();
-
-        echo "<select>";
+        echo "<form action='videos.php' method='GET'>";
+        echo "<select name='filter'>";
+        echo "<option value='show_all'>All Movies</option>";
         foreach ($rows as $value)
         {
             $cat = $value[0];
@@ -68,10 +114,12 @@
     # code...
         }
         echo "</select>";
+        echo '<input type="submit" value="Filter"></form>';
+
 
 
     }
-    function filterCats()
+    function filterCats($sql_handle, $category)
     {
 
 
