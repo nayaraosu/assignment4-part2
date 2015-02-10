@@ -8,54 +8,63 @@
 
         echo "Connection error: " . $mysqli->connect_errno ." ".$mysqli->connect_error;
     }
-
-    //$stmnt = $mysqli.prepare("Select where id=?")
-    // $stmnt.bind_param("s", $id)
-    // $stmnt.execute()
-    // $stmnt.bind_result($result)
-    
-    $q = 'INSERT INTO video (name,category,length,rented) VALUES ("Frank", "Comedy", 90,True)';
-    //echo $mysqli->query($q);
-
-    if(!isset($_GET['filter']))
-    {
-        $cat = "show_all";
-    }
     else
     {
-        $cat = $_GET['filter'];
-    }
+        //$stmnt = $mysqli.prepare("Select where id=?")
+        // $stmnt.bind_param("s", $id)
+        // $stmnt.execute()
+        // $stmnt.bind_result($result)
+    
+        $q = 'INSERT INTO video (name,category,length,rented) VALUES ("Frank", "Comedy", 90,True)';
+        //echo $mysqli->query($q);
 
-    if(isset($_GET['checkout']))
-    {
-        $vid_id =  $_GET['checkout'];
-        $q = "SELECT rented FROM video where id='$vid_id'";
-        $result = $mysqli->query($q);
-        $rows = $result->fetch_all();
-        $row = $rows[0];
-        if ($row[0] == 1)
+        if(!isset($_GET['filter']))
         {
-            echo $update_q = "UPDATE video SET rented=False WHERE id='$vid_id'";
-            $mysqli->query($update_q);
+            $cat = "show_all";
         }
         else
         {
-            echo $update_q = "UPDATE video SET rented=True WHERE id='$vid_id'";   
-            $mysqli->query($update_q);
+            $cat = $_GET['filter'];
         }
+
+        if(isset($_GET['checkout']))
+        {
+            $vid_id =  $_GET['checkout'];
+            $q = "SELECT rented FROM video where id='$vid_id'";
+            $result = $mysqli->query($q);
+            $rows = $result->fetch_all();
+            $row = $rows[0];
+            if ($row[0] == 1)
+            {
+                echo $update_q = "UPDATE video SET rented=False WHERE id='$vid_id'";
+                $mysqli->query($update_q);
+            }
+            else
+            {
+                echo $update_q = "UPDATE video SET rented=True WHERE id='$vid_id'";   
+                $mysqli->query($update_q);
+            }
+        }
+
+        if(isset($_GET['remove']))
+        {
+            $vid_id =  $_GET['remove'];
+            $q = "DELETE FROM video where id='$vid_id'";
+            $result = $mysqli->query($q);
+            echo $q;
+        }    
+
+
+        if(isset($_GET['add']) && $_GET['add'] === "true")
+        {   
+            addVid($mysqli);
+        }
+        getCatList($mysqli);
+        getVids($mysqli,$cat);
+
     }
 
-    if(isset($_GET['remove']))
-    {
-        $vid_id =  $_GET['remove'];
-        $q = "DELETE FROM video where id='$vid_id'";
-        $result = $mysqli->query($q);
-        echo $q;
-    }    
 
-    
-    getCatList($mysqli);
-    getVids($mysqli,$cat);
 
     function getVids($sql_handle, $category)
     {
@@ -125,8 +134,41 @@
 
     };
 
-    function addVid()
+    function addVid($sql_handle)
     {
+        $valid = True;
+        if (!isset($_GET['name']) || $_GET['name'] == "")
+        {
+            $valid = False;
+            echo "<h1>Please enter a name!</h1><br>";
+        }
+        if (!isset($_GET['category']) || $_GET['category'] == "")
+        {
+            $valid = False;
+            echo "<h1>Please enter a category!</h1><br>";
+        }
+
+        if (!isset($_GET['length']) || !is_numeric($_GET['length']) || strpos($_GET['length'], "."))
+        {
+
+            $valid = False;
+            echo "<h1>Please enter a valid runtime!</h1><br>";
+        }
+
+
+        
+        if($valid)
+        {
+            $name = $_GET['name'];
+            $category = $_GET['category'];
+            $length = $_GET['length'];
+            $q = "INSERT INTO video (name, category, length) VALUES (?,?,?)";
+            $stmnt = $sql_handle->prepare($q);
+            $stmnt->bind_param('ssi', $name, $category, $length);
+            $stmnt->execute();
+            $stmnt->close();
+        }
+
 
     };
 
