@@ -59,6 +59,10 @@
             addVid($mysqli);
         }
 
+        if(isset($_GET['delete_all']) && $_GET['delete_all'] == True)
+        {   
+            deleteAllVids($mysqli);
+        }
         getCatList($mysqli);
         getVids($mysqli,$cat);
 
@@ -73,7 +77,13 @@
 
     }
 
+    function deleteAllVids($sql_handle)
+    {
+           
+            $q = "DELETE FROM video";
+            $result = $sql_handle->query($q);
 
+    }
 
     function getVids($sql_handle, $category)
     {
@@ -113,7 +123,7 @@
           echo "<tr>";
         }  
         echo "</table>";
-        echo "<form action='remove.php' method='GET'><input type='hidden' name='delete_all' value='True'>"."<input type='submit' value='Delete All Videos'></form>";
+        echo "<form action='videos.php' method='GET'><input type='hidden' name='delete_all' value='True'>"."<input type='submit' value='Delete All Videos'></form>";
     };
 
     function getCatList($sql_handle)
@@ -144,30 +154,28 @@
     function addVid($sql_handle)
     {
         $valid = True;
+        $category = "";
+        
         if (!isset($_GET['name']) || $_GET['name'] == "")
         {
             $valid = False;
             echo "<h1>Please enter a name!</h1><br>";
         }
-        if (!isset($_GET['category']) || $_GET['category'] == "")
-        {
-            $valid = False;
-            echo "<h1>Please enter a category!</h1><br>";
-        }
 
-        if (!isset($_GET['length']) || !is_numeric($_GET['length']) || strpos($_GET['length'], "."))
+        if($_GET['length'] !== "" )
         {
 
-            $valid = False;
-            echo "<h1>Please enter a valid runtime!</h1><br>";
+            if (  !is_numeric($_GET['length']) || strpos($_GET['length'], ".") || $_GET['length'] < 0)
+            {
+                $valid = False;
+                echo "<h1>Please enter a valid runtime!</h1><br>";
+            }
         }
-
-
         
         if($valid)
         {
             $name = $_GET['name'];
-            $category = $_GET['category'];
+            $category = strtolower($_GET['category']);
             $length = $_GET['length'];
             $q = "INSERT INTO video (name, category, length) VALUES (?,?,?)";
             $stmnt = $sql_handle->prepare($q);
@@ -178,10 +186,4 @@
 
 
     };
-
-    function deleteVid()
-    {
-
-
-    }
 ?>
