@@ -1,0 +1,23 @@
+Start:  Wed, 11 Feb 2015 09:00:00 -0800 
+End: Wed, 11 Feb 2015 09:31:33 -0800 
+Tasks: fix for category and runtime
+
+Start: Tue, 10 Feb 2015 12:40:39 -0800 
+End: Tue, 10 Feb 2015 12:57:30 -0800 
+Tasks: code cleanup
+
+Start: Tue, 10 Feb 2015 12:24:18 -0800 
+End: Tue, 10 Feb 2015 12:40:39 -0800 
+Tasks: add video function
+
+Start: Tue, 10 Feb 2015 11:23:45 -0800 
+End: Tue, 10 Feb 2015 12:24:18 -0800 
+Tasks: add video function
+
+Start: Tue, 10 Feb 2015 10:07:16 -0800 
+End: Tue, 10 Feb 2015 11:23:45 -0800 
+Tasks: added checkout, delete, and filters
+
+Start: Tue, 10 Feb 2015 08:00:00 -0800  
+End: Tue, 10 Feb 2015 10:07:16 -0800 
+Tasks: initial adds plus tons of work
